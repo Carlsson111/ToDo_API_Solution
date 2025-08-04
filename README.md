@@ -22,7 +22,7 @@ Make sure the following are installed:
 
 ```bash
 # Clone the main application
-git clone https://github.com/mehrdad-javan/todo-api.git
+git clone https://github.com/mehrdad-javan/ToDo_API_Solution.git
 cd todo-api
 
 # Clone the utility library
