@@ -14,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import se.lexicon.todo_app.dto.AuthRequestDto;
 import se.lexicon.todo_app.dto.AuthResponseDto;
+import se.lexicon.todo_app.entity.Person;
+import se.lexicon.todo_app.entity.User;
+import se.lexicon.todo_app.repository.PersonRepository;
 import se.lexicon.todo_app.security.JwtTokenUtil;
 import se.lexicon.todo_app.security.TokenBlacklistStorage;
 import se.lexicon.todo_app.service.AuthService;
@@ -23,17 +26,21 @@ import java.util.Date;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private final PersonRepository personRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final TokenBlacklistStorage tokenBlacklistStorage;
 
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            JwtTokenUtil jwtTokenUtil,
-                           TokenBlacklistStorage tokenBlacklistStorage) {
+                           TokenBlacklistStorage tokenBlacklistStorage,
+                           PersonRepository personRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.tokenBlacklistStorage = tokenBlacklistStorage;
+        this.personRepository = personRepository;
     }
+
 
     @Override
     public AuthResponseDto login(AuthRequestDto request) {
@@ -51,11 +58,16 @@ public class AuthServiceImpl implements AuthService {
         String[] roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toArray(String[]::new);
+        // get the person details by username
+        Person person = personRepository.findByUserUsername(userDetails.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         AuthResponseDto response = AuthResponseDto.builder()
                 .token(jwt)
                 .type("Bearer")
                 .username(userDetails.getUsername())
+                .name(person != null ? person.getName() : null)
+                .email(person != null ? person.getEmail() : null)
                 .roles(roles)
                 .build();
 
