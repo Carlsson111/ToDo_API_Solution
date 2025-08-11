@@ -44,8 +44,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponseDto login(AuthRequestDto request) {
-        System.out.println("Login attempt for user: " + request.username());
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
@@ -55,72 +53,40 @@ public class AuthServiceImpl implements AuthService {
 
         String jwt = jwtTokenUtil.generateToken(userDetails);
 
-        String[] roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toArray(String[]::new);
-        // get the person details by username
         Person person = personRepository.findByUserUsername(userDetails.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        AuthResponseDto response = AuthResponseDto.builder()
+        return AuthResponseDto.builder()
                 .token(jwt)
                 .type("Bearer")
                 .username(userDetails.getUsername())
-                .name(person != null ? person.getName() : null)
-                .email(person != null ? person.getEmail() : null)
-                .roles(roles)
+                .name(person.getName())
+                .email(person.getEmail())
+                .roles(userDetails.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toArray(String[]::new))
                 .build();
-
-        System.out.println("Login successful for user: " + request.username());
-        return response;
     }
-
 
     @Override
     public void logout(String authHeader) {
-        System.out.println("authHeader = " + authHeader);
-        if (authHeader == null) {
-            throw new IllegalArgumentException("Authorization header is missing");
-        }
-
-        if (!authHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Token must be a Bearer token");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid authorization header");
         }
 
         String token = authHeader.substring(7);
+        String username = jwtTokenUtil.getUsernameFromToken(token);
 
         try {
-            // First check if token is already blacklisted
             if (tokenBlacklistStorage.isBlacklisted(token)) {
                 throw new IllegalArgumentException("Token has already been invalidated");
             }
 
-            Date expiryDate;
-            try {
-                // Validate token format and signature
-                expiryDate = jwtTokenUtil.getExpirationDateFromToken(token);
-            } catch (ExpiredJwtException e) {
-                // Even if token is expired, we should blacklist it
-                expiryDate = e.getClaims().getExpiration();
-                tokenBlacklistStorage.blacklistToken(token, expiryDate.toInstant());
-                SecurityContextHolder.clearContext();
-                throw new IllegalArgumentException("Token has expired but has been blacklisted");
-            }
-
-            // Blacklist the token regardless of expiration
-            tokenBlacklistStorage.blacklistToken(token, expiryDate.toInstant());
+            Date expiryDate = jwtTokenUtil.getExpirationDateFromToken(token);
+            tokenBlacklistStorage.blacklistToken(token, username, expiryDate.toInstant());
             SecurityContextHolder.clearContext();
-            System.out.println("Successfully logged out user");
-
-        } catch (ExpiredJwtException e) {
-            // This should not be reached due to inner try-catch
-            System.out.println("Token has expired: " + e.getMessage());
-            throw new IllegalArgumentException("Token has expired");
         } catch (Exception e) {
-            System.out.println("Error during logout: " + e.getMessage());
-            throw new IllegalArgumentException("Invalid token");
+            throw new IllegalArgumentException("Invalid token: " + e.getMessage());
         }
     }
-
-
 }
