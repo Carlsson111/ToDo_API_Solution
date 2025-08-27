@@ -1,55 +1,53 @@
-# ✅ Todo API
+## ⚙️ Backend Setup
 
-![Todo App](img/todo_app.png)
+### Requirements
 
-## 🚀 Getting Started
+- Java JDK 21+
 
-### 📋 Prerequisites
-
-Make sure the following are installed:
-
-- Java JDK 21
 - Maven
+
 - MySQL Database
+
 - Git
 
----
+- IDE (e.g., IntelliJ IDEA)
 
-### 🛠️ Setup Instructions
+### Steps
 
-#### 1. Clone the Repositories
+1. Fork and clone the backend repository: ToDo API
+   (https://github.com/mehrdad-javan/ToDo_API_Solution)
 
-```bash
-# Clone the main application
-git clone https://github.com/mehrdad-javan/ToDo_API_Solution.git
-cd todo-api
+2. Run the backend server.
 
-# Clone the utility library
-git clone https://github.com/mehrdad-javan/notify-util-spring.git  
-cd notify-util-spring
-```
+3. Test all API endpoints via Swagger.
 
-### 3. Set the Environment Variables
+4. Verify JWT authentication is working.
 
-```bash
-APP_USER_EMAIL=your_email@example.com
-APP_USER_PASSWORD=your_password
-```
+### User Credentials
 
-### ▶️ Running the Application
+Admin User
 
-#### 👤 User Credentials
+• Username: admin\
+• Password: password\
+• Role: ADMIN\
+• Email: admin@test.se
 
-##### 🔐 Admin User
+Regular User
 
-- **Username:** `admin`
-- **Password:** `password`
-- **Role:** `ADMIN`
-- **Email:** `admin@test.se`
+• Username: user1\
+• Password: password\
+• Role: USER\
+• Email: user1@test.se
 
-##### 👥 Regular User
+### Email Service (Optional)
 
-- **Username:** `user1`
-- **Password:** `password`
-- **Role:** `USER`
-- **Email:** `user1@test.se`
+If you want to enable email notifications:
+
+- Clone this repo: notify-util-spring
+  (https://github.com/mehrdad-javan/notify-util-spring)
+
+- Add its dependencies to your pom.xml.
+
+- Set environment variables:
+  APP_USER_EMAIL=your_email\
+  APP_USER_PASSWORD=your_password

@@ -7,8 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import se.lexicon.notify.model.Email;
-import se.lexicon.notify.service.MessageService;
+//import se.lexicon.notify.model.Email;
+//import se.lexicon.notify.service.MessageService;
 import se.lexicon.todo_app.dto.PersonDto;
 import se.lexicon.todo_app.dto.PersonRegistrationDto;
 import se.lexicon.todo_app.entity.Person;
@@ -34,8 +34,8 @@ public class PersonServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private MessageService<Email> emailService;
+    //@Mock
+    //private MessageService<Email> emailService;
 
     @Mock
     private PasswordEncoder passwordEncoder;

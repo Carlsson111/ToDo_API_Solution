@@ -10,12 +10,6 @@ import se.lexicon.todo_app.repository.AttachmentRepository;
 import se.lexicon.todo_app.repository.PersonRepository;
 import se.lexicon.todo_app.repository.TodoRepository;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.util.*;
-
 @Configuration
 public class DataInitializer {
     @Autowired
