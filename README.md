@@ -42,7 +42,7 @@ Regular User
 
 If you want to enable email notifications:
 
-- Clone this repo: [notify-util-spring]https://github.com/mehrdad-javan/notify-util-spring)
+- Clone this repo: [notify-util-spring](https://github.com/mehrdad-javan/notify-util-spring)
 
 - Add its dependencies to your pom.xml.
 - Set environment variables:  
